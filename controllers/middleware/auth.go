@@ -28,6 +28,12 @@ func AuthMiddleware(c *gin.Context) {
 		return
 	}
 
+	if claims.IsAdmin {
+		c.Set(constants.IsAdmin, true)
+	} else {
+		c.Set(constants.IsAdmin, false)
+	}
+
 	c.Set(constants.IsAuthenticatedKey, true)
 	c.Set(constants.UserIDKey, claims.ID)
 	c.Next()

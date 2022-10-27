@@ -15,10 +15,20 @@ import (
 var Handler HandlerFunc
 
 type HandlerFunc interface {
+	// AUTH HANDLER
 	AuthenticateUser(credentials datatransfers.UserLogin) (token string, err error)
 	RegisterUser(credentials datatransfers.UserSignup) (err error)
+
+	// USER HANDLER
 	RetrieveUser(id uint) (user models.User, err error)
 	UpdateUser(id uint, user datatransfers.UserUpdate) (err error)
+
+	// TODO HANDLER
+	GetAllUserTodo(user_id uint) (todo []models.Todo, err error)
+	GETTodoByID(user_id uint, id uint, isAdmin bool) (todo models.Todo, err error)
+	UpdateTodoUser(user_id uint, id uint, isAdmin bool, todo datatransfers.TodoUpdate) (err error)
+	InsertTodo(user_id uint, newTodo datatransfers.TodoInsert) (todo models.Todo, err error)
+	DeleteTodoById(user_id uint, id uint, isAdmin bool) (todo models.Todo, err error)
 }
 
 type module struct {
@@ -28,10 +38,12 @@ type module struct {
 type dbEntity struct {
 	conn           *gorm.DB
 	userRepository models.UserRepository
+	todoRepository models.TodoRepository
 }
 
 func dbMigrate(db *gorm.DB) {
 	db.AutoMigrate(&models.User{})
+	db.AutoMigrate(&models.Todo{})
 }
 
 func InitializeHandler() (err error) {
@@ -55,6 +67,7 @@ func InitializeHandler() (err error) {
 		db: &dbEntity{
 			conn:           db,
 			userRepository: models.NewUserRepository(db),
+			todoRepository: models.NewTodoRepository(db),
 		},
 	}
 

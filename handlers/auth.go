@@ -32,6 +32,7 @@ func generateToken(user models.User) (string, error) {
 	expiry := time.Now().Add(constants.AuthenticationTimeout)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, datatransfers.JWTClaims{
 		ID:        user.ID,
+		IsAdmin:   user.IsAdmin,
 		ExpiresAt: expiry.Unix(),
 		IssuedAt:  now.Unix(),
 	})
@@ -47,6 +48,7 @@ func (m *module) RegisterUser(credentials datatransfers.UserSignup) (err error) 
 		Username: credentials.Username,
 		Email:    credentials.Email,
 		Password: string(hashedPassword),
+		IsAdmin:  credentials.IsAdmin,
 		Bio:      credentials.Bio,
 	}); err != nil {
 		log.Print(err)

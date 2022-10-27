@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -25,7 +24,9 @@ func POSTLogin(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, datatransfers.Response{Status: true, Message: "login success", Data: fmt.Sprintf("Token: %s", token)})
+	c.JSON(http.StatusOK, datatransfers.Response{Status: true, Message: "login success", Data: map[string]string{
+		"token": token,
+	}})
 }
 
 func POSTRegister(c *gin.Context) {

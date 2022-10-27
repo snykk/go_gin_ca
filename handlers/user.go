@@ -10,7 +10,7 @@ import (
 
 func (m *module) RetrieveUser(id uint) (user models.User, err error) {
 	if user, err = m.db.userRepository.GetUserByID(id); err != nil {
-		return models.User{}, fmt.Errorf("cannot find user with username %d", id)
+		return models.User{}, fmt.Errorf("cannot find user with id %d", id)
 	}
 	return
 }

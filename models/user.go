@@ -16,6 +16,7 @@ type User struct {
 	Email     string    `gorm:"unique" json:"email"`
 	Password  string    `json:"password"`
 	Bio       string    `json:"bio"`
+	IsAdmin   bool      `json:"is_admin"`
 	CreatedAt time.Time `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime" json:"updated_at"`
 }

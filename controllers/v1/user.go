@@ -30,6 +30,7 @@ func GETUser(c *gin.Context) {
 		Username:  user.Username,
 		Email:     user.Email,
 		Bio:       user.Bio,
+		IsAdmin:   user.IsAdmin,
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 	}})
@@ -45,7 +46,7 @@ func PUTUser(c *gin.Context) {
 	}
 
 	if err = handlers.Handler.UpdateUser(c.GetUint(constants.UserIDKey), user); err != nil {
-		c.JSON(http.StatusNotModified, datatransfers.Response{Status: false, Message: "failed updating user"})
+		c.JSON(http.StatusInternalServerError, datatransfers.Response{Status: false, Message: "failed updating user"})
 		return
 	}
 
