@@ -11,6 +11,7 @@ import (
 	"github.com/snykk/go_gin_ca/datatransfers"
 	"github.com/snykk/go_gin_ca/handlers"
 	"github.com/snykk/go_gin_ca/models"
+	"github.com/snykk/go_gin_ca/utils"
 )
 
 func POSTTodo(c *gin.Context) {
@@ -23,16 +24,8 @@ func POSTTodo(c *gin.Context) {
 	}
 
 	// cek if priority is valid or not
-	if !isArrayContains(constants.ListOfPriority, newTodo.Priority) {
-		var option string
-		for index, priority := range constants.ListOfPriority {
-			option += priority
-			if index != len(constants.ListOfPriority)-1 {
-				option += ", "
-			}
-		}
-
-		c.JSON(http.StatusUnauthorized, datatransfers.Response{Status: false, Message: fmt.Sprintf("priority must be one of [%s]", option)})
+	if err := utils.IsPriorityValid(newTodo.Priority); err != nil {
+		c.JSON(http.StatusCreated, datatransfers.Response{Status: true, Message: "todo created successfuly", Data: err.Error()})
 		return
 	}
 
@@ -83,6 +76,12 @@ func PUTTodoUser(c *gin.Context) {
 		return
 	}
 
+	// cek if priority is valid or not
+	if err := utils.IsPriorityValid(todo.Priority); err != nil {
+		c.JSON(http.StatusCreated, datatransfers.Response{Status: true, Message: "todo created successfuly", Data: err.Error()})
+		return
+	}
+
 	if err = handlers.Handler.UpdateTodoUser(c.GetUint(constants.UserIDKey), uint(idParam), c.GetBool(constants.IsAdmin), todo); err != nil {
 		fmt.Println("ini errornya", err)
 		c.JSON(http.StatusInternalServerError, datatransfers.Response{Status: false, Message: err.Error()})
@@ -104,13 +103,4 @@ func DELETETodo(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, datatransfers.Response{Status: true, Message: fmt.Sprintf("todo with id %d deleted successfully", idParam), Data: todo})
-}
-
-func isArrayContains(arr []string, str string) bool {
-	for _, item := range arr {
-		if item == str {
-			return true
-		}
-	}
-	return false
 }
